@@ -9,13 +9,16 @@ const Container = styled.div`
   display: flex;
   align-items: flex-end;
   padding-bottom: 15px;
-  justify-content: ${({variant}) => variant === "left" ? "flex-start" : "flex-end"};
+  justify-content: ${({ variant }) =>
+    variant === "left" ? "flex-start" : "flex-end"};
 `;
 
 const BodyChat = styled.div`
-  background-color: ${({variant}) => variant === "left" ? "purple" : "#e9e9e9e9"};
-  color: ${({variant}) => variant === "left" ? "white" : "black"};
-  ${({variant}) => variant === "left" ? "margin-left: 10px" : "margin-right: 10px"};
+  background-color: ${({ variant }) =>
+    variant === "left" ? "purple" : "#e9e9e9e9"};
+  color: ${({ variant }) => (variant === "left" ? "white" : "black")};
+  ${({ variant }) =>
+    variant === "left" ? "margin-left: 10px" : "margin-right: 10px"};
   width: fit-content;
   padding: 10px;
   border-radius: 10px;
@@ -25,23 +28,31 @@ const ChatText = styled.p`
   margin: 0px;
 `;
 
-const Message = ({ variant = "left" }) => {
+const Name = styled.p`
+  margin: 0px 0px 5px 15px;
+  font-size: 12px;
+  color: #8c8c8c;
+`;
+
+const Message = ({ variant = "left", data }) => {
   return (
     <Container variant={variant}>
       {variant === "left" && (
         <Photo
-          src="https://xsgames.co/randomusers/assets/avatars/female/9.jpg"
+          src={data.photo}
           height={80}
           alt="photo profile"
         />
       )}
-
-      <BodyChat variant={variant} >
-        <ChatText>Ini Test Chat</ChatText>
-      </BodyChat>
+      <div>
+        <Name>{data.name}</Name>
+        <BodyChat variant={variant}>
+          <ChatText>{data.text}</ChatText>
+        </BodyChat>
+      </div>
       {variant === "right" && (
         <Photo
-          src="https://xsgames.co/randomusers/assets/avatars/female/9.jpg"
+          src={data.photo}
           height={80}
           alt="photo profile"
         />
