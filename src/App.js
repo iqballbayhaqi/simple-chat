@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./App.css";
 import ChatAction from "./components/ChatAction";
 import styled from "styled-components";
@@ -16,25 +16,14 @@ const Container = styled.div`
 
 const ChatWrapper = styled.div`
   padding: 10px 10px;
+  background: #ffffff;
 `;
 
 const App = (props) => {
-  const dataChat = [
-    {
-      id: 1,
-      name: "iqbal",
-      text: "Hai Semuanya !",
-      createdAt: new Date(),
-      photo: "https://xsgames.co/randomusers/assets/avatars/male/0.jpg"
-    },
-    {
-      id: 2,
-      name: "elsa",
-      text: "Hai juga Semuanya !",
-      createdAt: new Date(),
-      photo: "https://xsgames.co/randomusers/assets/avatars/female/0.jpg"
-    },
-  ];
+  const [updated, setUpdated] = useState(false);
+  const [listDataChat, setListDataChat] = useState([]);
+
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     swal({
@@ -51,14 +40,101 @@ const App = (props) => {
     );
   }, []);
 
+  useEffect(() => {
+    setListDataChat(JSON.parse(localStorage.getItem("dataChat")));
+    window.addEventListener("storage", (e) => {
+      setListDataChat(JSON.parse(localStorage.getItem("dataChat")));
+    });
+  }, [updated]);
+
+  const sendChat = async (text) => {
+    if (text.length === 0) return;
+
+    let currentData = JSON.parse(localStorage.getItem("dataChat"));
+
+    if (currentData) {
+      currentData.find((value, index) => {
+        if (value.name === props.name) {
+          localStorage.setItem(
+            "dataChat",
+            JSON.stringify([
+              ...currentData,
+              {
+                id: currentData.length + 1,
+                name: props.name,
+                text,
+                createdAt: new Date(),
+                photo: value.photo,
+              },
+            ])
+          );
+          return true;
+        } else if (props.name === "") {
+          localStorage.setItem(
+            "dataChat",
+            JSON.stringify([
+              ...currentData,
+              {
+                id: currentData.length + 1,
+                name: "Anonymous",
+                text,
+                createdAt: new Date(),
+                photo: `https://xsgames.co/randomusers/assets/avatars/${
+                  Math.floor(Math.random() * 2) === 0 ? "female" : "male"
+                }/${Math.floor(Math.random() * 50)}.jpg`,
+              },
+            ])
+          );
+        } else {
+          localStorage.setItem(
+            "dataChat",
+            JSON.stringify([
+              ...currentData,
+              {
+                id: currentData.length + 1,
+                name: props.name,
+                text,
+                createdAt: new Date(),
+                photo: `https://xsgames.co/randomusers/assets/avatars/${
+                  Math.floor(Math.random() * 2) === 0 ? "female" : "male"
+                }/${Math.floor(Math.random() * 50)}.jpg`,
+              },
+            ])
+          );
+        }
+      });
+    } else {
+      localStorage.setItem(
+        "dataChat",
+        JSON.stringify([
+          {
+            id: 1,
+            name: props.name,
+            text,
+            createdAt: new Date(),
+            photo: `https://xsgames.co/randomusers/assets/avatars/${
+              Math.floor(Math.random() * 2) === 0 ? "female" : "male"
+            }/${Math.floor(Math.random() * 50)}.jpg`,
+          },
+        ])
+      );
+    }
+
+    setUpdated(!updated);
+  };
+
   return (
     <Container>
       <ChatWrapper>
-        {dataChat.map((res) => (
-          <Message key={res.id} variant={res.name === props.name ? "right" : "left"} data={res} />
+        {listDataChat.map((res) => (
+          <Message
+            key={res.id}
+            variant={res.name === props.name ? "right" : "left"}
+            data={res}
+          />
         ))}
       </ChatWrapper>
-      <ChatAction />
+      <ChatAction sendChat={sendChat} />
     </Container>
   );
 };

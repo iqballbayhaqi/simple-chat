@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -33,14 +33,43 @@ const ButtonSend = styled.button`
   padding: 0px 12px;
 `;
 
-const ChatAction = () => {
+const Space = styled.div`
+  height: 50px;
+`;
+
+const ChatAction = ({ sendChat }) => {
+  const [text, setText] = useState("");
+
+  const goToBottom = () => {
+   
+    setTimeout(() =>  window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    }), 100)
+  };
+
   return (
-    <Container>
-      <ChatTyperWrapper>
-        <ChatInput type="text" placeholder="Start Typing..." />
-      </ChatTyperWrapper>
-      <ButtonSend>Send</ButtonSend>
-    </Container>
+    <>
+      <Space />
+      <Container>
+        <ChatTyperWrapper>
+          <ChatInput
+            type="text"
+            placeholder="Start Typing..."
+            onChange={(data) => setText(data.target.value)}
+          />
+        </ChatTyperWrapper>
+        <ButtonSend
+          onClick={() => {
+            sendChat(text);
+            setText("");
+            goToBottom();
+          }}
+        >
+          Send
+        </ButtonSend>
+      </Container>
+    </>
   );
 };
 

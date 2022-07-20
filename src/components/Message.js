@@ -11,6 +11,7 @@ const Container = styled.div`
   padding-bottom: 15px;
   justify-content: ${({ variant }) =>
     variant === "left" ? "flex-start" : "flex-end"};
+  background-color: #fff
 `;
 
 const BodyChat = styled.div`
